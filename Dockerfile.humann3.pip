@@ -11,15 +11,13 @@ RUN apt-get install -y build-essential
 #RUN apt-get install -y build-essential python3.7 python3-pip python3-dev openslide-tools
 RUN pip3 -q install pip --upgrade
 
-#RUN mkdir workspace
 WORKDIR /workspace
-#RUN mkdir notebooks
-
-#COPY notebooks/how_to_use_histolab.ipynb /workspace/notebooks
 
 RUN pip3 install --upgrade pip
 RUN pip install pooch
-RUN pip3 install jupyter
+RUN pip3 install jupyterlab
+RUN jupyter notebook --generate-config
+COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
 
 # Add Tini. Tini operates as a process subreaper for jupyter. This prevents kernel crashes.
 ENV TINI_VERSION v0.6.0

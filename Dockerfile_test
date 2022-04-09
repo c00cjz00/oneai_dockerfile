@@ -1,0 +1,45 @@
+# qiime2
+#
+# VERSION       2022.2
+FROM quay.io/qiime2/core:2022.2
+MAINTAINER Allen Chaung summerhill001@gmail.com
+
+RUN export DEBIAN_FRONTEND=noninteractive && \
+apt-get update && \
+apt-get -y install apt-utils && \
+apt-get -y install sudo
+
+RUN useradd -ms /bin/bash qiime2 && echo "qiime2:qiime2" | chpasswd && adduser qiime2 sudo
+
+#USER ubuntu
+#WORKDIR /home/ubuntu
+#USER 1000:1000
+
+#ENV GALAXY_CONFIG_BRAND deepTools
+# The following two lines are optional and can be given during runtime
+# with the -e http_proxy='http://yourproxyIP:8080' parameter
+#ENV http_proxy 'http://yourproxyIP:8080'
+#ENV https_proxy 'http://yourproxyIP:8080'
+
+WORKDIR /workspace
+
+# Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
+EXPOSE :8888
+
+COPY bashrc /home/ubuntu/.bashrc
+# Activate the environment, and make sure it's activated:
+#RUN conda activate qiime2-2022.2
+#RUN conda init
+#RUN bash
+#RUN sleep 2
+#RUN conda update -n base -c defaults conda
+#RUN conda activate qiime2-2022.2
+RUN conda install -n qiime2-2022.2 -y -c conda-forge jupyterlab
+RUN jupyter serverextension enable --py qiime2 --sys-prefix
+#COPY run.py .
+USER qiime2
+
+#USER 1000:1000
+# Autostart script that is invoked during container start
+CMD ["jupyter","lab","--NotebookApp.token=''","--NotebookApp.password=''","--ip=0.0.0.0","--allow-root","--port=8888","--no-browser"]
+

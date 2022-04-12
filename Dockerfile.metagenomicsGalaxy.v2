@@ -1,0 +1,42 @@
+# Galaxy - metagenomics-training
+# VERSION       0.2
+
+## 安裝來源
+FROM quay.io/galaxy/metagenomics-training
+
+## 維護人員
+MAINTAINER Allen Chaung summerhill001@gmail.com
+
+## 安裝套件
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+RUN apt-get update -y 
+RUN apt-get install --assume-yes apt-utils
+RUN apt-get install libreadline6-dev multiarch-support  wget libtinfo-dev -y
+RUN curl http://ftp.debian.org/debian/pool/main/r/readline6/libreadline6_6.3-8+b3_amd64.deb -o libreadline6_6.3-8+b3_amd64.deb
+RUN apt install ./libreadline6_6.3-8+b3_amd64.deb -y
+
+## 工作目錄
+WORKDIR /galaxy-central
+
+## 系統標題
+ENV GALAXY_CONFIG_BRAND Metagenomic-training
+
+## 更新系統
+ENV TZ=Asia/Taipei
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+## 安裝並啟動系統穩定性套件
+## Add Tini. Tini operates as a process subreaper for jupyter. This prevents kernel crashes.
+ENV TINI_VERSION v0.6.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+## Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
+EXPOSE :80
+EXPOSE :21
+EXPOSE :8800
+
+## 啟動 galaxy
+## Autostart script that is invoked during container start
+CMD ["/usr/bin/startup"]

@@ -1,0 +1,34 @@
+# Galaxy - asaim-framework
+# VERSION       0.2
+
+## 安裝來源
+FROM quay.io/bebatut/asaim-framework:latest
+
+## 維護人員
+MAINTAINER Allen Chaung summerhill001@gmail.com
+
+## 工作目錄
+WORKDIR /galaxy-central
+
+## 系統標題
+ENV GALAXY_CONFIG_BRAND asaim-framework
+
+## 更新系統
+ENV TZ=Asia/Taipei
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+## 安裝並啟動系統穩定性套件
+## Add Tini. Tini operates as a process subreaper for jupyter. This prevents kernel crashes.
+ENV TINI_VERSION v0.6.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+## Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
+EXPOSE :80
+EXPOSE :21
+EXPOSE :8800
+
+## 啟動 galaxy
+## Autostart script that is invoked during container start
+CMD ["/usr/bin/startup"]

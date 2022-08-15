@@ -1,0 +1,30 @@
+[
+{
+  "id": "54876198-9194-4d32-9fd2-67a0cdfa2222",
+  "core_metadata_collections": [
+    {
+      "node_id": "b19812cf-698d-487a-a7e3-54d751e9785e",
+      "submitter_id": "core_metadata_collection_f02db4a95f"
+    }
+  ],
+  "slides": [
+		{
+		  "node_id": "1bf0ce1e-2789-417b-834c-24d1026a54c2",
+		  "submitter_id": "slide_42d20a6c7a"
+		}
+  ],
+  "type": "slide_image",
+  "project_id": "jnkns-jenkins",
+  "submitter_id": "jnkns-jenkins_export_222",
+  "data_category": "Mass Cytometry",
+  "data_format": "tsv",
+  "data_type": "Single Channel IMC Image",
+  "file_name": "export.tsv",
+  "file_size": 34569527,
+  "md5sum": "226ae8c7cb2502e5ddb951b767a83594",
+  "object_id": "805bbb21-20d2-4e33-aeed-239ce14f4b88"
+}  
+]
+
+
+

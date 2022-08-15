@@ -1,0 +1,53 @@
+# eggnog-mapper
+# VERSION       v2.1.7
+
+## 安裝來源
+FROM ubuntu:18.04
+
+## 維護人員
+MAINTAINER Allen Chaung summerhill001@gmail.com
+
+## 工作目錄
+WORKDIR /data
+
+## 更新系統
+RUN apt-get update && apt-get -y update
+ENV TZ=Asia/Taipei
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get install -y build-essential build-essential libssl-dev libffi-dev python3-dev python3-pip wget curl unzip
+RUN apt-get install -y python3.7 
+RUN rm /usr/bin/python3
+RUN ln -s python3.7 /usr/bin/python3
+RUN python3 -m pip install pip
+
+RUN pip3 -q install pip --upgrade
+RUN pip3 install --upgrade pip
+RUN pip3 install pooch
+RUN pip3 install jupyterlab
+
+RUN jupyter notebook --generate-config
+
+## 複製 jupyter_notebook_config
+COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
+
+
+## 安裝套件
+RUN     cd /opt \
+&&      apt-get update \
+&&      apt-get install -y wget python git \
+&&      git clone https://github.com/jhcepas/eggnog-mapper.git \
+&&      ln -s /opt/eggnog-mapper/download_eggnog_data.py /usr/local/bin \
+&&      ln -s /opt/eggnog-mapper/emapper.py /usr/local/bin \
+&&      apt-get autoremove -y git \
+&&      rm -rf /tmp/* \
+&&      rm -rf /var/lib/apt/lists/*
+
+## 安裝並啟動系統穩定性套件
+## Add Tini. Tini operates as a process subreaper for jupyter. This prevents kernel crashes.
+ENV TINI_VERSION v0.6.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+## 啟動jupyter notebook
+CMD ["jupyter", "notebook", "--port=8888", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/workspace"]

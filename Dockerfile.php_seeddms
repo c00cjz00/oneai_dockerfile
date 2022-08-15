@@ -1,0 +1,16 @@
+FROM ubuntu:18.04
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update
+RUN apt-get install -y apt-utils
+RUN apt-get install -y software-properties-common gpg-agent --no-install-recommends --no-install-suggests
+
+RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+RUN apt-get update
+RUN apt-get install -y unzip curl apt-transport-https apt-utils curl git-core php7.4-cli php7.4-curl --no-install-recommends --no-install-suggests
+RUN apt-get install -y php7.4-dev php7.4-fpm php7.4-mysql php7.4-gd php7.4-imagick php7.4-mbstring php7.4-zip php7.4-xml php7.4-json php7.4-gd php7.4-ssh2 php7.4-dom php7.4-uuid php7.4-sqlite3 --no-install-recommends --no-install-suggests
+
+# Autostart script that is invoked during container start
+#CMD ["/usr/sbin/sshd","-D"]
+
+
